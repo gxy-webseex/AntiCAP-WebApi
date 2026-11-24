@@ -500,4 +500,5 @@ if __name__ == '__main__':
 
     uvicorn_access_logger = logging.getLogger("uvicorn.access")
     uvicorn_access_logger.addFilter(NoStaticFilter())
-    uvicorn.run(app, host="0.0.0.0", port=6688, access_log=True)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 6688)), access_log=True)
+
