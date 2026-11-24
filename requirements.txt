@@ -6,6 +6,7 @@ PyJWT>=2.8.0
 python-multipart==0.0.9
 uvicorn
 sqlalchemy
+greenlet
 passlib==1.7.4
 bcrypt==3.2.0
 aiosqlite
