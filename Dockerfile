@@ -9,6 +9,12 @@ WORKDIR /app
 # ImportError: libGL.so.1: cannot open shared object file
 RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1 && rm -rf /var/lib/apt/lists/*
 
+# Install CPU-only torch/torchvision first. Hostless has no GPU, so the
+# default CUDA torch wheels from PyPI (several GB) are wasted and pushed
+# the build past Hostless ~33 minute limit. Pre-installing the CPU wheels
+# satisfies ultralytics torch>=1.8.0, so pip will not pull CUDA torch later.
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
