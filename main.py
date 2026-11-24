@@ -379,8 +379,13 @@ async def update_user(username: str, user_update: UserUpdate, current_user: User
     if user_update.balance is not None:
         user.balance = user_update.balance
 
+    # Capture values before commit: after commit the async session expires
+    # attributes, and reading them afterwards raises MissingGreenlet (500).
+    updated_username = user.username
+    updated_balance = user.balance
+
     await db.commit()
-    return {"message": "User updated successfully", "username": user.username, "balance": user.balance}
+    return {"message": "User updated successfully", "username": updated_username, "balance": updated_balance}
 
 
 @app.get("/api/admin/costs", summary="获取所有接口扣点配置", tags=["管理员"])
