@@ -7,9 +7,12 @@ import os
 
 # The Hostless runtime filesystem is read-only, so SQLite cannot write to
 # ./app.db inside the image ("attempt to write a readonly database").
-# Hostless mounts a writable persistent disk at /data, so the database
-# lives there instead. Override with the DATABASE_PATH env var if needed.
-DATABASE_PATH = os.environ.get("DATABASE_PATH", "/data/app.db")
+# Hostless docs say to write temporary files to /tmp, so the database
+# lives there. This is a temporary workaround, not persistent storage:
+# the database is recreated on every restart/redeploy, and all users,
+# registration codes and balances are lost then. To keep data, attach a
+# writable disk and set DATABASE_PATH to a path on it, e.g. /data/app.db.
+DATABASE_PATH = os.environ.get("DATABASE_PATH", "/tmp/app.db")
 try:
     os.makedirs(os.path.dirname(DATABASE_PATH) or ".", exist_ok=True)
 except OSError:
