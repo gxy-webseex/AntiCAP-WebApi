@@ -18,6 +18,15 @@ RUN pip install --no-cache-dir torch torchvision --index-url https://download.py
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-download the AntiCAP models into the image. At runtime AntiCAPs
+# ModelManager tries to create AntiCAP-Models under the installed package
+# directory and download the models there, but the Hostless runtime
+# filesystem is read-only (OSError: [Errno 30] Read-only file system).
+# Baking the models in at build time (when the filesystem is writable)
+# means the directory and files already exist at runtime, so the manager
+# skips the download and the app can start.
+RUN python -c "from AntiCAP import Handler; Handler(show_banner=False)"
+
 COPY . .
 
 EXPOSE 8000
